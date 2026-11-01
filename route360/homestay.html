@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth"><head>
+<title>Greenhouse Homestay | Grahan Village, Parvati Valley</title>
+<meta name="description" content="Greenhouse Homestay: 10 rooms in an old Kath Kuni house in Grahan Village, Himachal Pradesh, with home-cooked meals and a trekking base.">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:["Inter","sans-serif"]},colors:{cream:"#FBF7F0",sand:"#EADFCB",pine:"#254434",ink:"#0E1512",moss:"#5F7A4E",accent:"#EA580C"}}}}</script>
+</head>
+<body class="font-sans bg-cream text-slate-800 antialiased overflow-x-hidden">
+<div id="nav"></div>
+<main>
+<header class="relative min-h-[70vh] flex items-center justify-center text-center px-4 pt-32 pb-20 overflow-hidden bg-ink">
+ <div data-bg="homestayHero" class="px absolute inset-x-0 -top-1/4 h-[150%] bg-cover bg-center" data-speed=".12"></div>
+ <div class="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/30 to-ink/85"></div>
+ <div class="relative max-w-3xl text-white [text-shadow:0_2px_14px_rgba(0,0,0,.45)]">
+  <h1 class="rv text-5xl md:text-7xl font-extrabold uppercase">Greenhouse <span class="text-orange-400">Homestay</span></h1>
+  <p class="rv text-xl md:text-2xl font-light mt-5" style="transition-delay:.1s">Disconnect from the noise. Reconnect with the mountains, in the heart of Grahan Village.</p>
+  <a href="index.html?interest=homestay#booking" class="rv inline-block mt-8 bg-accent hover:bg-white hover:text-ink text-white font-extrabold px-8 py-4 rounded-full transition hover:scale-105 [text-shadow:none]" style="transition-delay:.2s">Reserve a Room</a></div>
+</header>
+
+<section class="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-3 gap-6">
+ <div class="rv bg-white border border-sand rounded-2xl p-7 shadow-md hover:-translate-y-2 hover:shadow-xl transition duration-300"><h3 class="text-xl font-extrabold text-pine mb-2">🤫 Quiet &amp; Disconnected</h3><p class="text-slate-600 text-sm leading-relaxed">Grahan Village has no cellular network, a rare, deeply quiet atmosphere. WiFi with power backup is available when you need to connect.</p></div>
+ <div class="rv bg-white border border-sand rounded-2xl p-7 shadow-md hover:-translate-y-2 hover:shadow-xl transition duration-300" style="transition-delay:.1s"><h3 class="text-xl font-extrabold text-pine mb-2">🏠 Kath Kuni Heritage</h3><p class="text-slate-600 text-sm leading-relaxed">An old, authentic Kath Kuni house in Grahan: cozy, secure rooms with hot water available.</p></div>
+ <div class="rv bg-white border border-sand rounded-2xl p-7 shadow-md hover:-translate-y-2 hover:shadow-xl transition duration-300" style="transition-delay:.2s"><h3 class="text-xl font-extrabold text-pine mb-2">🍲 Home-Cooked Meals</h3><p class="text-slate-600 text-sm leading-relaxed">Fresh local food from our kitchen, mostly wholesome vegetarian, with select non-vegetarian options.</p></div>
+</section>
+
+<section class="py-20 bg-sand/60"><div class="max-w-7xl mx-auto px-4">
+ <h2 class="rv text-3xl md:text-5xl font-extrabold text-pine text-center mb-3">Our <span class="room-total"></span> Rooms</h2>
+ <p class="rv text-center text-slate-600 mb-10">Luggage storage available while you trek the high trails.</p>
+ <div id="rooms-grid" class="grid md:grid-cols-3 gap-6"></div></div></section>
+
+<section class="relative overflow-hidden bg-ink py-24 text-center text-white">
+ <div data-bg="whyImage" class="px absolute inset-x-0 -top-1/4 h-[150%] bg-cover bg-center opacity-50" data-speed=".12"></div>
+ <div class="absolute inset-0 bg-ink/55"></div>
+ <div class="rv relative max-w-3xl mx-auto px-4"><h2 class="text-3xl md:text-5xl font-extrabold">Your trailhead is our front door.</h2>
+  <p class="text-white/80 mt-4 text-lg">Sar Pass, Min Thach, Thunja Kutla, Padri and Shambhala Caves all begin from Grahan.</p>
+  <a href="index.html#trails" class="inline-block mt-8 bg-white text-ink hover:bg-accent hover:text-white font-bold px-8 py-3 rounded-full transition">See the Treks →</a></div>
+</section>
+
+<section id="gallery-section" class="py-20 max-w-7xl mx-auto px-4"><h2 class="rv text-3xl md:text-5xl font-extrabold text-pine text-center mb-10">Gallery</h2><div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div></section>
+
+<section class="py-20 max-w-7xl mx-auto px-4"><h2 class="rv text-3xl md:text-5xl font-extrabold text-pine text-center mb-10">Find Us in Grahan</h2>
+ <div class="grid lg:grid-cols-2 gap-10"><div id="map"></div><div id="contact-info" class="space-y-3 text-sm text-slate-600"></div></div></section>
+</main>
+<div id="footer"></div>
+<script src="config.js"></script><script src="site.js"></script>
+</body></html>

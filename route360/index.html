@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth"><head>
+<title>Route360Trekify | Himalayan Treks & Greenhouse Homestay, Grahan Village</title>
+<meta name="description" content="Guided Himalayan treks (Sar Pass, Min Thach, Thunja Kutla, Padri, Shambhala Caves) and Greenhouse Homestay in Grahan Village, Parvati Valley, Himachal Pradesh.">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:["Inter","sans-serif"]},colors:{cream:"#FBF7F0",sand:"#EADFCB",pine:"#254434",ink:"#0E1512",moss:"#5F7A4E",accent:"#EA580C"}}}}</script>
+</head>
+<body class="font-sans bg-cream text-slate-800 antialiased overflow-x-hidden">
+<div id="nav"></div>
+<main>
+<header class="relative min-h-[92vh] flex items-center justify-center text-center px-4 pt-32 pb-24 overflow-hidden bg-ink">
+ <div id="hero-slides" class="px absolute inset-x-0 -top-1/4 h-[150%]" data-speed=".12"></div>
+ <div class="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/25 to-ink/85"></div>
+ <div class="relative max-w-4xl text-white [text-shadow:0_2px_14px_rgba(0,0,0,.45)]">
+  <span class="rv inline-block px-5 py-1.5 rounded-full bg-white/15 backdrop-blur border border-white/30 text-xs font-bold tracking-widest uppercase mb-6">📍 Grahan Village · 7,700 ft · Himachal Pradesh</span>
+  <h1 class="rv text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tight mb-6 leading-[1.05]" style="transition-delay:.1s">Chase the <span id="rot" class="gtext">Peaks</span><br class="hidden sm:block"> in Grahan.</h1>
+  <p class="rv text-lg md:text-2xl font-light mb-10 max-w-3xl mx-auto" style="transition-delay:.2s">Guided Himalayan treks and a Kath Kuni homestay at 7,700 ft in the Parvati Valley. Your trail starts at our doorstep.</p>
+  <div class="rv flex flex-col sm:flex-row gap-4 justify-center [text-shadow:none]" style="transition-delay:.3s">
+   <a href="#trails" class="mag bg-accent hover:bg-white hover:text-ink text-white px-8 py-4 rounded-full font-extrabold transition hover:scale-105">Explore Our Treks</a>
+   <a href="homestay.html" class="mag bg-white/15 backdrop-blur border border-white/40 hover:bg-white hover:text-ink text-white px-8 py-4 rounded-full font-bold transition hover:scale-105">Visit Greenhouse Homestay</a></div>
+ </div>
+ <a href="#stats" aria-label="Scroll down" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-3xl animate-bounce">↓</a>
+</header>
+
+<section id="stats" class="spot relative overflow-hidden bg-ink py-24 text-white scroll-mt-20">
+ <div data-bg="bandImage" class="px absolute inset-x-0 -top-1/4 h-[150%] bg-cover bg-center opacity-70" data-speed=".12"></div>
+ <div class="absolute inset-0 bg-ink/55"></div>
+ <div class="relative max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+  <div class="rv"><p class="text-4xl md:text-6xl font-extrabold text-orange-400"><span class="count" data-to="7700">0</span><span class="text-2xl"> ft</span></p><p class="uppercase tracking-widest text-xs mt-2 text-white/80">Grahan Basecamp</p></div>
+  <div class="rv" style="transition-delay:.1s"><p class="text-4xl md:text-6xl font-extrabold text-orange-400"><span class="count" data-to="13800">0</span><span class="text-2xl"> ft</span></p><p class="uppercase tracking-widest text-xs mt-2 text-white/80">Highest Pass</p></div>
+  <div class="rv" style="transition-delay:.2s"><p class="text-4xl md:text-6xl font-extrabold text-orange-400"><span class="count trek-total" data-to="5">0</span></p><p class="uppercase tracking-widest text-xs mt-2 text-white/80">Signature Treks</p></div>
+  <div class="rv" style="transition-delay:.3s"><p class="text-4xl md:text-6xl font-extrabold text-orange-400"><span class="count room-total" data-to="10">0</span></p><p class="uppercase tracking-widest text-xs mt-2 text-white/80">Homestay Rooms</p></div>
+ </div>
+</section>
+
+<section id="trails" class="spot bg-ink py-24 scroll-mt-20"><div class="max-w-7xl mx-auto px-4">
+ <div class="rv text-center mb-10"><span class="text-orange-400 font-bold tracking-widest uppercase text-xs">360 Degrees of Discovery</span>
+  <h2 class="text-3xl md:text-5xl font-extrabold text-white mt-2">Himalayan Trails from Grahan</h2><div class="w-24 h-1 bg-accent mx-auto mt-5 rounded-full"></div></div>
+ <div id="tabs" class="flex flex-wrap justify-center gap-3 mb-10"></div>
+ <div id="treks-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+</div></section>
+
+<section id="homestay" class="py-24 bg-sand/60 scroll-mt-20"><div class="max-w-7xl mx-auto px-4">
+ <div class="grid lg:grid-cols-2 gap-10 items-center mb-14">
+  <div class="rv space-y-4"><span class="text-moss text-xs font-bold uppercase tracking-widest">🏡 Our Basecamp Stay</span>
+   <h2 class="text-3xl md:text-5xl font-extrabold text-pine">Rest Easy at <span class="text-accent">Greenhouse Homestay</span></h2>
+   <p class="text-lg text-slate-600"><b class="room-total"></b> rooms in an old Kath Kuni house in Grahan Village, with home-cooked meals and a deeply quiet mountain setting.</p>
+   <a href="homestay.html" class="inline-block bg-ink hover:bg-accent text-white font-bold px-7 py-3 rounded-full transition">Explore the Homestay →</a></div>
+  <div class="rv relative h-80 rounded-3xl overflow-hidden shadow-2xl bg-moss/30"><div data-bg="homestayHero" class="px absolute inset-x-0 -top-1/4 h-[150%] bg-cover bg-center" data-speed=".1"></div></div></div>
+ <div id="rooms-grid" class="grid md:grid-cols-3 gap-6"></div>
+</div></section>
+
+<section id="gallery-section" class="py-24 max-w-7xl mx-auto px-4 scroll-mt-20">
+ <h2 class="rv text-3xl md:text-5xl font-extrabold text-pine text-center mb-10">Gallery</h2>
+ <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+</section>
+
+<section id="why" class="spot relative overflow-hidden bg-ink py-24 text-white scroll-mt-20">
+ <div data-bg="whyImage" class="px absolute inset-x-0 -top-1/4 h-[150%] bg-cover bg-center opacity-50" data-speed=".12"></div>
+ <div class="absolute inset-0 bg-ink/60"></div>
+ <div class="relative max-w-7xl mx-auto px-4">
+  <h2 class="rv text-3xl md:text-5xl font-extrabold text-center mb-12">Why Trek With Route360Trekify?</h2>
+  <div class="grid md:grid-cols-2 lg:grid-cols-6 gap-6">
+   <div class="rv lg:col-span-4 p-8 rounded-3xl bg-white/10 backdrop-blur border border-white/15 text-left hover:-translate-y-2 hover:bg-white/15 transition duration-300"><div class="text-4xl mb-3">🧭</div><h3 class="font-bold text-lg mb-2">Native Grahan Guides</h3><p class="text-white/75 text-sm">Local guides who know every weather shift and shepherd path of the valley.</p></div>
+   <div class="rv lg:col-span-2 p-8 rounded-3xl bg-white/10 backdrop-blur border border-white/15 text-left hover:-translate-y-2 hover:bg-white/15 transition duration-300" style="transition-delay:.1s"><div class="text-4xl mb-3">🎒</div><h3 class="font-bold text-lg mb-2">Proper Mountain Gear</h3><p class="text-white/75 text-sm">Sleeping bags, tents and hot camp meals arranged for multi-day treks.</p></div>
+   <div class="rv lg:col-span-2 p-8 rounded-3xl bg-white/10 backdrop-blur border border-white/15 text-left hover:-translate-y-2 hover:bg-white/15 transition duration-300" style="transition-delay:.2s"><div class="text-4xl mb-3">🏡</div><h3 class="font-bold text-lg mb-2">Greenhouse Hospitality</h3><p class="text-white/75 text-sm">Acclimatize at our own homestay in Grahan before ascending above 10,000 ft.</p></div>
+   <div class="rv lg:col-span-4 p-8 rounded-3xl bg-white/10 backdrop-blur border border-white/15 text-left hover:-translate-y-2 hover:bg-white/15 transition duration-300" style="transition-delay:.3s"><div class="text-4xl mb-3">🌲</div><h3 class="font-bold text-lg mb-2">Safety &amp; Eco-Ethics</h3><p class="text-white/75 text-sm">Small groups, first-aid awareness and strict Leave-No-Trace practice.</p></div>
+  </div></div></section>
+
+<section id="contact" class="py-20 max-w-7xl mx-auto px-4 scroll-mt-20">
+ <h2 class="text-3xl md:text-5xl font-extrabold text-pine text-center mb-10">Find Us in Grahan</h2>
+ <div class="grid lg:grid-cols-2 gap-10"><div id="map"></div><div id="contact-info" class="space-y-3 text-sm text-slate-600"></div></div>
+</section>
+
+<section id="booking" class="spot relative overflow-hidden bg-ink py-24 text-white scroll-mt-20">
+ <div data-bg="bookImage" class="px absolute inset-x-0 -top-1/4 h-[150%] bg-cover bg-center opacity-60" data-speed=".1"></div>
+ <div class="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/55 to-ink/85"></div>
+ <div class="relative max-w-3xl mx-auto px-4">
+ <div class="rv text-center mb-8"><span class="text-orange-400 font-extrabold tracking-widest uppercase text-sm">Step Into The Himalayas</span>
+  <h2 class="text-3xl md:text-5xl font-extrabold text-white mt-2">Plan Your <span class="gtext">Trek or Stay</span></h2>
+  <p class="text-white/70 mt-3">Send us your inquiry and our team will get back to you. Payments are handled face-to-face on arrival.</p></div>
+ <div class="rv bg-ink/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/15 p-8">
+  <div id="result" class="hidden"></div>
+  <form id="inquiry" class="space-y-4">
+   <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
+   <div class="grid sm:grid-cols-2 gap-4">
+    <div><label for="name" class="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Name *</label><input id="name" name="name" required maxlength="100" class="inp"></div>
+    <div><label for="contact_" class="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Phone / Email *</label><input id="contact_" name="contact" required maxlength="120" class="inp"></div></div>
+   <div class="grid sm:grid-cols-2 gap-4">
+    <div><label for="interest" class="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Interested In *</label><select id="interest" name="interest" required class="inp"></select></div>
+    <div><label for="room" class="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Room Preference</label><select id="room" name="room" class="inp"></select></div></div>
+   <div class="grid sm:grid-cols-2 gap-4">
+    <div><label for="start_date" class="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Preferred Start Date</label><input type="date" id="start_date" name="start_date" class="inp"></div>
+    <div><label class="block text-xs font-bold uppercase tracking-wider text-white/60 mb-2">Group Size</label><input type="hidden" id="group_size" name="group_size" value="1-2">
+     <div id="gsize" class="flex flex-wrap gap-2"><button type="button" class="gs" data-v="1-2">1-2</button><button type="button" class="gs" data-v="3-5">3-5</button><button type="button" class="gs" data-v="6-10">6-10</button><button type="button" class="gs" data-v="10+">10+</button></div></div></div>
+   <div><label for="message" class="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Message / Custom Requests</label><textarea id="message" name="message" rows="3" maxlength="800" class="inp" placeholder="Nights at Greenhouse, custom trails, questions..."></textarea></div>
+   <button id="submitBtn" class="mag w-full bg-gradient-to-r from-accent to-amber-500 hover:shadow-xl hover:shadow-accent/40 hover:scale-[1.02] text-white font-extrabold py-4 rounded-xl transition disabled:opacity-60">Send Inquiry →</button>
+  </form></div>
+</div></section>
+</main>
+<div id="footer"></div>
+<script src="config.js"></script><script src="site.js"></script>
+</body></html>
