@@ -4,8 +4,8 @@ const U = id => `https://images.unsplash.com/photo-${id}?q=80&w=1920&auto=format
 const D = { heroImages: [U('1464822759023-fed622ff2c3b'), U('1519681393784-d120267933ba'), U('1506744038136-46273834b3fb')],
   bandImage: U('1454496522488-7a8e488e8606'), whyImage: U('1426604966848-d7adac402bff'), bookImage: U('1519681393784-d120267933ba'), baseElevation: 7700,
   attractions: [
-    { type: 'Waterfalls', icon: '💧', name: 'Three Waterfalls', desc: 'Three waterfalls around Grahan, reached on guided walks. Perfect for arrival afternoons and rest days between treks.' },
-    { type: 'Viewpoints', icon: '🌄', name: 'Scenic Viewpoints', desc: 'Viewpoints around the village with wide Parvati Valley views. Great for sunrise, sunset and photographs.' }] };
+    { type: 'Waterfalls', name: 'Waterfall Trails', img: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1200&auto=format&fit=crop', desc: 'Follow forest paths to the waterfalls around Grahan with a local guide. Ideal for arrival afternoons and rest days between treks.' },
+    { type: 'Viewpoints', name: 'Golden Hour Viewpoints', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1200&auto=format&fit=crop', desc: 'Viewpoints around the village with wide Parvati Valley views, at their best at sunrise and sunset.' }] };
 Object.keys(D).forEach(k => { if (!S[k] || (Array.isArray(S[k]) && !S[k].length)) S[k] = D[k]; });
 const set = (id, h) => { const e = $(id); if (e) e.innerHTML = h; return e; };
 const mm = s => window.matchMedia ? window.matchMedia(s).matches : false;
@@ -67,6 +67,10 @@ st2.textContent = `h1,h2,h3{font-family:'Sora','Inter',sans-serif;letter-spacing
 .inp::placeholder{color:rgba(255,255,255,.4)}.inp:focus{outline:none;border-color:#EA580C;box-shadow:0 0 0 3px rgba(234,88,12,.3);background:rgba(255,255,255,.12)}
 select.inp option{background:#0E1512;color:#fff}
 .gs{padding:.6rem 1.1rem;border-radius:9999px;border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:700;transition:.2s}.gs:hover{border-color:#EA580C}.gs.on{background:#EA580C;border-color:#EA580C}
+.rcar{display:grid;perspective:900px}
+.rslide{grid-area:1/1;opacity:0;pointer-events:none;transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .6s}
+.rslide.next{transform:translateY(60px) rotateX(-70deg)}.rslide.prev{transform:translateY(-60px) rotateX(70deg)}
+.rslide.on{opacity:1;transform:none;pointer-events:auto}
 @keyframes pop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:none}}`;
 document.head.appendChild(st2);
 document.querySelectorAll('[data-bg]').forEach(e => e.style.backgroundImage = `url('${S[e.dataset.bg]}')`);
@@ -153,7 +157,6 @@ const ag = $('attractions-grid'), AT = S.attractions || [];
 if (ag) { ag.className = 'grid gap-6 md:grid-cols-2 ' + (AT.length >= 3 ? 'lg:grid-cols-3' : 'max-w-5xl mx-auto');
   ag.innerHTML = AT.map((a, i) => `<article class="rv tilt group relative h-80 rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-ink to-moss/60 shadow-xl" style="transition-delay:${i * 100}ms">
    ${a.img ? `<img src="${a.img}" alt="${eh(a.name)}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-700" onerror="this.remove()">` : ''}
-   <span class="absolute right-5 top-5 text-5xl opacity-30 group-hover:opacity-70 group-hover:scale-110 transition">${a.icon || '🏞️'}</span>
    <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></div>
    <div class="absolute bottom-0 p-6"><span class="text-[10px] font-extrabold tracking-widest uppercase bg-accent px-3 py-1 rounded-full">${eh(a.type)}</span>
     <h3 class="text-2xl font-extrabold mt-3">${eh(a.name)}</h3><p class="text-white/75 text-sm mt-2">${eh(a.desc)}</p>
@@ -167,28 +170,32 @@ const DEMO = [{ source: 'google', rating: 5, demo: 1, name: 'Sample guest', text
   { source: 'website', rating: 5, demo: 1, name: 'Sample guest', text: 'Sample guest feedback for the layout preview.' }];
 const L = R.length ? R : demo ? DEMO : HL;
 if (rs) {
-  {
-    const SRC = { google: ['<span class="inline-flex w-5 h-5 items-center justify-center rounded-full bg-white text-[#4285F4] text-xs font-black">G</span>', 'Google review'],
-      instagram: [igSvg('w-5 h-5'), 'Instagram comment'], website: ['<span>💬</span>', 'Guest review'], highlight: ['<span>✨</span>', 'Life at Greenhouse &amp; Route360'] };
-    const eb = $('review-eyebrow'); if (eb) eb.textContent = R.length ? 'What our guests say' : demo ? 'Demo preview: sample reviews, not real' : 'Welcome to Grahan';
-    const card = $('review-card'), dots = $('review-dots'); let k = 0, timer = 0;
-    dots.innerHTML = L.map((_, i) => `<button type="button" data-i="${i}" aria-label="Review ${i + 1}" class="w-2.5 h-2.5 rounded-full bg-white/30 transition"></button>`).join('');
-    const show = (i, fade) => { k = i; const r = L[i], sc = SRC[r.source] || SRC.website;
-      const paint = () => { card.innerHTML = `<div class="flex items-center justify-center gap-2 text-sm font-semibold text-white/80">${sc[0]}${sc[1]}${r.demo ? ' · SAMPLE' : ''}</div>
-        ${r.rating ? `<div class="text-orange-300 text-xl mt-2 tracking-widest">${'★'.repeat(Math.round(r.rating))}</div>` : ''}
-        <p class="text-xl md:text-3xl font-semibold leading-snug mt-3">${r.source === 'highlight' ? eh(r.text) : '“' + eh(r.text) + '”'}</p>
-        ${r.name ? `<p class="mt-4 text-white/70">— ${r.url ? `<a class="underline hover:text-white" target="_blank" rel="noopener" href="${r.url}">${eh(r.name)}</a>` : eh(r.name)}${r.date ? ', ' + eh(r.date) : ''}</p>` : ''}`;
-        card.style.opacity = 1; dots.querySelectorAll('button').forEach((d, j) => d.className = 'w-2.5 h-2.5 rounded-full transition ' + (j === i ? 'bg-accent scale-125' : 'bg-white/30')); };
-      if (fade) { card.style.opacity = 0; setTimeout(paint, 300); } else paint(); };
-    const play = () => { clearInterval(timer); if (L.length > 1 && !mm('(prefers-reduced-motion: reduce)')) timer = setInterval(() => show((k + 1) % L.length, true), 6500); };
-    dots.onclick = e => { const b = e.target.closest('button'); if (b) { show(+b.dataset.i, true); play(); } };
-    rs.onmouseenter = () => clearInterval(timer); rs.onmouseleave = play;
-    const igl = S.instagram.map(i => `<a class="underline hover:text-white" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">@${i.user}</a>`).join(' · ');
-    const links = R.length ? (S.googleReviewsUrl ? `<a class="underline hover:text-white" target="_blank" rel="noopener" href="${S.googleReviewsUrl}">Read all Google reviews</a>` : '')
-      : `Stayed with us? Share your experience ${S.googleReviewsUrl ? `on <a class="underline hover:text-white" target="_blank" rel="noopener" href="${S.googleReviewsUrl}">Google</a> or ` : ''}on Instagram: ${igl}`;
-    if ($('review-links')) $('review-links').innerHTML = links;
-    show(0, false); play();
-  }
+  const SRC = { google: ['<span class="inline-flex w-5 h-5 items-center justify-center rounded-full bg-white text-[#4285F4] text-xs font-black">G</span>', 'Google review'],
+    instagram: [igSvg('w-5 h-5'), 'Instagram comment'], website: ['<span>💬</span>', 'Guest review'], highlight: ['<span>✨</span>', 'Life at Greenhouse &amp; Route360'] };
+  const eb = $('review-eyebrow'); if (eb) eb.textContent = R.length ? 'What our guests say' : demo ? 'Demo preview: sample reviews, not real' : 'Welcome to Grahan';
+  const card = $('review-card'), dots = $('review-dots'), n = L.length; let k = 0, timer = 0, sx = null;
+  card.innerHTML = L.map(r => { const sc = SRC[r.source] || SRC.website; return `<div class="rslide text-center px-2"><div class="flex items-center justify-center gap-2 text-sm font-semibold text-white/80">${sc[0]}${sc[1]}${r.demo ? ' · SAMPLE' : ''}</div>
+    ${r.rating ? `<div class="text-orange-300 text-xl mt-2 tracking-widest">${'★'.repeat(Math.round(r.rating))}</div>` : ''}
+    <p class="text-xl md:text-3xl font-semibold leading-snug mt-3">${r.source === 'highlight' ? eh(r.text) : '“' + eh(r.text) + '”'}</p>
+    ${r.name ? `<p class="mt-4 text-white/70">— ${r.url ? `<a class="underline hover:text-white" target="_blank" rel="noopener" href="${r.url}">${eh(r.name)}</a>` : eh(r.name)}${r.date ? ', ' + eh(r.date) : ''}</p>` : ''}</div>`; }).join('');
+  const slides = [...card.querySelectorAll('.rslide')];
+  dots.innerHTML = L.map((_, i) => `<button type="button" data-i="${i}" aria-label="Go to slide ${i + 1}" class="w-2.5 h-2.5 rounded-full bg-white/30 transition"></button>`).join('');
+  const show = i => { k = (i + n) % n;
+    slides.forEach((sl, j) => { const off = (j - k + n) % n; sl.className = 'rslide text-center px-2 ' + (off === 0 ? 'on' : off <= n / 2 ? 'next' : 'prev'); });
+    dots.querySelectorAll('button').forEach((d, j) => d.className = 'w-2.5 h-2.5 rounded-full transition ' + (j === k ? 'bg-accent scale-125' : 'bg-white/30')); };
+  const play = () => { clearInterval(timer); if (n > 1 && !mm('(prefers-reduced-motion: reduce)')) timer = setInterval(() => show(k + 1), 5500); };
+  const go = d => { show(k + d); play(); };
+  dots.onclick = e => { const b = e.target.closest('button'); if (b) { show(+b.dataset.i); play(); } };
+  const pv = $('review-prev'), nx = $('review-next'); if (pv) pv.onclick = () => go(-1); if (nx) nx.onclick = () => go(1);
+  if (n < 2) [pv, nx, dots].forEach(el => el && (el.style.display = 'none'));
+  card.onpointerdown = e => { sx = e.clientX; };
+  card.onpointerup = e => { if (sx !== null && Math.abs(e.clientX - sx) > 40) go(e.clientX < sx ? 1 : -1); sx = null; };
+  rs.onmouseenter = () => clearInterval(timer); rs.onmouseleave = play;
+  const igl = S.instagram.map(i => `<a class="underline hover:text-white" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">@${i.user}</a>`).join(' · ');
+  const links = R.length ? (S.googleReviewsUrl ? `<a class="underline hover:text-white" target="_blank" rel="noopener" href="${S.googleReviewsUrl}">Read all Google reviews</a>` : '')
+    : `Stayed with us? Share your experience ${S.googleReviewsUrl ? `on <a class="underline hover:text-white" target="_blank" rel="noopener" href="${S.googleReviewsUrl}">Google</a> or ` : ''}on Instagram: ${igl}`;
+  if ($('review-links')) $('review-links').innerHTML = links;
+  show(0); play();
 }
 
 /* Map + contact */
