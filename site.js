@@ -2,14 +2,54 @@
 const S = window.SITE, $ = id => document.getElementById(id), q = new URLSearchParams(location.search);
 const U = id => `https://images.unsplash.com/photo-${id}?q=80&w=1920&auto=format&fit=crop`;
 const D = { heroImages: [U('1464822759023-fed622ff2c3b'), U('1519681393784-d120267933ba'), U('1506744038136-46273834b3fb')],
-  bandImage: U('1454496522488-7a8e488e8606'), whyImage: U('1426604966848-d7adac402bff'), bookImage: U('1519681393784-d120267933ba') };
+  bandImage: U('1454496522488-7a8e488e8606'), whyImage: U('1426604966848-d7adac402bff'), bookImage: U('1519681393784-d120267933ba'), baseElevation: 7700,
+  attractions: [
+    { type: 'Waterfalls', icon: '💧', name: 'Three Waterfalls', desc: 'Three waterfalls around Grahan, reached on guided walks. Perfect for arrival afternoons and rest days between treks.' },
+    { type: 'Viewpoints', icon: '🌄', name: 'Scenic Viewpoints', desc: 'Viewpoints around the village with wide Parvati Valley views. Great for sunrise, sunset and photographs.' }] };
 Object.keys(D).forEach(k => { if (!S[k] || (Array.isArray(S[k]) && !S[k].length)) S[k] = D[k]; });
 const set = (id, h) => { const e = $(id); if (e) e.innerHTML = h; return e; };
 const mm = s => window.matchMedia ? window.matchMedia(s).matches : false;
 const mapUrl = S.map.url || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(S.map.query);
 const price = p => p ? `<span class="font-extrabold text-accent">${p}</span>` : `<span class="text-xs italic text-slate-500">Price on request</span>`;
+const eh = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const igSvg = c => `<svg viewBox="0 0 24 24" class="${c}" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>`;
+const peakFt = t => +(String(t.alt).replace(/,/g, '').match(/\d+/) || [0])[0];
+/* Illustrative 3D route (set t.route = [elevations in ft] in config.js to use real data) */
+function routeAnim(cv, info, t) {
+  const ctx = cv && cv.getContext && cv.getContext('2d'); if (!ctx) return () => {};
+  const base = S.baseElevation, peak = peakFt(t), N = 90, Hh = 230, ZH = 90;
+  let seed = [...t.key].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296, ph = rnd() * 6.28;
+  const raw = Array.from({ length: N }, (_, i) => { const u = i / (N - 1); return Math.pow(Math.sin(Math.PI * u), 1.3) * (0.94 + 0.06 * Math.sin(u * 23 + ph)); }), top = Math.max(...raw);
+  const elev = t.route && t.route.length > 1 ? t.route : raw.map(v => base + (peak - base) * v / top);
+  const n = elev.length, lo = Math.min(...elev), hi = Math.max(...elev);
+  const P = elev.map((e, i) => { const u = i / (n - 1); return { x: (u - 0.5) * 260, y: Math.sin(u * 6.9 + ph) * 45 + Math.sin(u * 9 + ph * 2) * 8, z: (e - lo) / ((hi - lo) || 1) * ZH }; });
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), reduceM = mm('(prefers-reduced-motion: reduce)');
+  const W = () => cv.clientWidth || 600; cv.width = W() * dpr; cv.height = Hh * dpr;
+  let yaw = -0.7, drag = null, p = 0, last = 0, raf = 0, run = true;
+  cv.onpointerdown = e => { drag = e.clientX; }; cv.onpointermove = e => { if (drag !== null) { yaw += (e.clientX - drag) * 0.01; drag = e.clientX; } };
+  cv.onpointerup = cv.onpointerleave = () => { drag = null; };
+  const proj = (x, y, z) => { const c = Math.cos(yaw), s = Math.sin(yaw), X = x * c - y * s, Y = x * s + y * c, k = W() / 340; return [W() / 2 + X * k, Hh * 0.68 + (Y * 0.5 - z * 0.9) * k]; };
+  const line = (a, b) => { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); };
+  const draw = ts => {
+    if (!run) return; const dt = Math.min(((ts - last) / 1000) || 0, 0.05); last = ts;
+    if (drag === null && !reduceM) yaw += dt * 0.25;
+    p = reduceM ? 1 : (p + dt / 5 > 1.25 ? 0 : p + dt / 5); const m = Math.floor(Math.min(p, 1) * (n - 1));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W(), Hh); ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,.09)';
+    for (let g = -150; g <= 150; g += 30) line(proj(g, -80, 0), proj(g, 80, 0));
+    for (let g = -80; g <= 80; g += 20) line(proj(-150, g, 0), proj(150, g, 0));
+    for (let i = 0; i < m; i += 2) { ctx.strokeStyle = `rgba(234,88,12,${0.08 + P[i].z / ZH * 0.25})`; line(proj(P[i].x, P[i].y, 0), proj(P[i].x, P[i].y, P[i].z)); }
+    ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.shadowColor = '#EA580C'; ctx.shadowBlur = 12;
+    for (let i = 1; i <= m; i++) { ctx.strokeStyle = `hsl(${30 + P[i].z / ZH * 20},95%,${52 + P[i].z / ZH * 14}%)`; line(proj(P[i - 1].x, P[i - 1].y, P[i - 1].z), proj(P[i].x, P[i].y, P[i].z)); }
+    ctx.shadowBlur = 0; const [mx, my] = proj(P[m].x, P[m].y, P[m].z); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(mx, my, 5, 0, 6.3); ctx.fill();
+    if (info) info.innerHTML = `▲ <b class="text-orange-300">${Math.round(elev[m]).toLocaleString('en-IN')} ft</b> <span class="text-white/50">· gain ≈ ${Math.round(hi - lo).toLocaleString('en-IN')} ft</span>`;
+    if (!reduceM) raf = requestAnimationFrame(draw);
+  };
+  raf = requestAnimationFrame(draw);
+  return () => { run = false; cancelAnimationFrame(raf); };
+}
 const logoImg = c => S.logo ? `<img src="${S.logo}" alt="Route360Trekify logo" class="${c}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='images/Subheading.png'}else{this.remove()}">` : '';
-const ig = S.instagram.map(i => `<a class="hover:text-accent" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">@${i.user}</a>`).join(' · ');
+const ig = S.instagram.map(i => `<a class="inline-flex items-center gap-1.5 hover:text-accent" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">${igSvg('w-4 h-4')}@${i.user}</a>`).join('');
 
 const st = document.createElement('style');
 st.textContent = `.rv{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}.rv.in{opacity:1;transform:none}
@@ -47,10 +87,11 @@ $('mbtn').onclick = () => $('mmenu').classList.toggle('hidden');
 $('mmenu').onclick = () => $('mmenu').classList.add('hidden');
 
 set('footer', `<div class="bg-ink text-white/70 text-sm pt-14 pb-8"><div class="max-w-7xl mx-auto px-4">
+ <div class="mb-12 rounded-2xl border-2 border-red-500/70 bg-red-500/10 p-5 text-center"><p class="text-xl md:text-3xl font-extrabold text-white tracking-wide">🚫🍺 GRAHAN IS A STRICTLY NO-ALCOHOL VILLAGE.</p><p class="mt-2 font-bold text-red-200">Please do not bring or consume alcohol here. Thank you for respecting our village.</p></div>
  <div class="grid md:grid-cols-3 gap-10">
   <div>${logoImg('h-24 w-auto bg-cream/95 rounded-2xl p-2')}<p class="mt-4 text-white font-extrabold text-lg">Route360<span class="text-accent">Trekify</span> &amp; Greenhouse Homestay</p><p class="mt-1">Trek the Himalaya. Rest in Grahan.</p></div>
-  <div><p class="text-white font-bold mb-3">Explore</p><div class="space-y-2"><a class="block hover:text-accent" href="index.html#trails">Treks</a><a class="block hover:text-accent" href="homestay.html">Greenhouse Homestay</a><a class="block hover:text-accent" href="index.html#why">Why Us</a><a class="block hover:text-accent" href="index.html#booking">Book Now</a></div></div>
-  <div><p class="text-white font-bold mb-3">Contact</p><p>${S.address}</p><p class="mt-2"><a class="hover:text-accent" href="tel:${S.phoneRaw}">${S.phone}</a></p><p><a class="hover:text-accent" href="mailto:${S.email}">${S.email}</a></p><p class="mt-2">📸 ${ig}</p></div></div>
+  <div><p class="text-white font-bold mb-3">Explore</p><div class="space-y-2"><a class="block hover:text-accent" href="index.html#trails">Treks</a><a class="block hover:text-accent" href="homestay.html">Greenhouse Homestay</a><a class="block hover:text-accent" href="index.html#around">Around Grahan</a><a class="block hover:text-accent" href="index.html#why">Why Us</a><a class="block hover:text-accent" href="index.html#booking">Book Now</a></div></div>
+  <div><p class="text-white font-bold mb-3">Contact</p><p>${S.address}</p><p class="mt-2"><a class="hover:text-accent" href="tel:${S.phoneRaw}">${S.phone}</a></p><p><a class="hover:text-accent" href="mailto:${S.email}">${S.email}</a></p><p class="mt-3 flex flex-wrap gap-x-4 gap-y-1">${ig}</p></div></div>
  <div class="border-t border-white/10 mt-10 pt-6 text-center text-xs text-white/50">&copy; ${new Date().getFullYear()} Route360Trekify &amp; Greenhouse Homestay. All rights reserved.</div></div></div>`);
 
 /* Treks + filter */
@@ -85,11 +126,18 @@ const gs = $('gallery-section');
 if (gs) {
   if (!S.gallery.length) gs.style.display = 'none';
   else {
-    set('gallery-grid', S.gallery.map((g, i) => `<button type="button" data-i="${i}" class="rv aspect-square overflow-hidden rounded-2xl shadow-md"><img src="${g.src}" alt="${g.alt || ''}" loading="lazy" class="w-full h-full object-cover hover:scale-110 transition duration-700"></button>`).join(''));
+const isVid = g => g.type === 'video' || g.youtube;
+    const gThumb = g => g.youtube || g.poster ? `<img src="${g.youtube ? 'https://img.youtube.com/vi/' + g.youtube + '/hqdefault.jpg' : g.poster}" alt="${eh(g.alt)}" loading="lazy" class="w-full h-full object-cover hover:scale-110 transition duration-700">`
+      : g.type === 'video' ? `<video src="${g.src}#t=0.5" muted playsinline preload="metadata" class="w-full h-full object-cover"></video>`
+      : `<img src="${g.src}" alt="${eh(g.alt)}" loading="lazy" class="w-full h-full object-cover hover:scale-110 transition duration-700">`;
+    const gMedia = g => g.youtube ? `<iframe class="w-[92vw] max-w-4xl aspect-video rounded-xl" src="https://www.youtube-nocookie.com/embed/${g.youtube}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`
+      : g.type === 'video' ? `<video src="${g.src}" controls autoplay playsinline class="max-h-[85vh] max-w-full rounded-xl shadow-2xl"></video>`
+      : `<img src="${g.src}" alt="${eh(g.alt)}" class="max-h-[85vh] max-w-full rounded-xl shadow-2xl">`;
+    set('gallery-grid', S.gallery.map((g, i) => `<button type="button" data-i="${i}" class="rv relative aspect-square overflow-hidden rounded-2xl shadow-md">${gThumb(g)}${isVid(g) ? '<span class="absolute inset-0 flex items-center justify-center pointer-events-none"><span class="w-14 h-14 rounded-full bg-black/55 text-white text-2xl flex items-center justify-center">▶</span></span>' : ''}</button>`).join(''));
     const open = i => {
       const g = S.gallery, o = document.createElement('div'); let k = i;
       o.className = 'fixed inset-0 z-[100] bg-ink/95 flex items-center justify-center p-4';
-      const draw = () => o.innerHTML = `<button data-a="x" class="absolute top-4 right-5 text-white text-4xl">×</button><button data-a="p" class="absolute left-3 md:left-8 text-white text-5xl">‹</button><img src="${g[k].src}" alt="${g[k].alt || ''}" class="max-h-[85vh] max-w-full rounded-xl shadow-2xl"><button data-a="n" class="absolute right-3 md:right-8 text-white text-5xl">›</button>`;
+      const draw = () => o.innerHTML = `<button data-a="x" class="absolute top-4 right-5 text-white text-4xl">×</button><button data-a="p" class="absolute left-3 md:left-8 text-white text-5xl">‹</button>${gMedia(g[k])}<button data-a="n" class="absolute right-3 md:right-8 text-white text-5xl">›</button>`;
       const step = d => { k = (k + d + g.length) % g.length; draw(); };
       const key = e => { if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1); };
       const close = () => { o.remove(); removeEventListener('keydown', key); };
@@ -100,13 +148,56 @@ if (gs) {
   }
 }
 
+/* Attractions */
+const ag = $('attractions-grid'), AT = S.attractions || [];
+if (ag) { ag.className = 'grid gap-6 md:grid-cols-2 ' + (AT.length >= 3 ? 'lg:grid-cols-3' : 'max-w-5xl mx-auto');
+  ag.innerHTML = AT.map((a, i) => `<article class="rv tilt group relative h-80 rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-ink to-moss/60 shadow-xl" style="transition-delay:${i * 100}ms">
+   ${a.img ? `<img src="${a.img}" alt="${eh(a.name)}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-700" onerror="this.remove()">` : ''}
+   <span class="absolute right-5 top-5 text-5xl opacity-30 group-hover:opacity-70 group-hover:scale-110 transition">${a.icon || '🏞️'}</span>
+   <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></div>
+   <div class="absolute bottom-0 p-6"><span class="text-[10px] font-extrabold tracking-widest uppercase bg-accent px-3 py-1 rounded-full">${eh(a.type)}</span>
+    <h3 class="text-2xl font-extrabold mt-3">${eh(a.name)}</h3><p class="text-white/75 text-sm mt-2">${eh(a.desc)}</p>
+    <a href="index.html?interest=custom#booking" class="inline-block mt-4 text-orange-300 font-bold text-sm hover:text-white">Plan a visit →</a></div></article>`).join(''); }
+
+/* Reviews bar */
+const rs = $('reviews-section'), R = S.reviews || [], demo = q.get('demo') === 'reviews';
+const HL = ['Guided by local people who know these trails', 'Sleep in an old Kath Kuni house at 7,700 ft', 'Home-cooked meals, mostly vegetarian', 'No cellular network: just the mountains, with WiFi when you need it'].map(text => ({ source: 'highlight', text }));
+const DEMO = [{ source: 'google', rating: 5, demo: 1, name: 'Sample guest', text: 'This is a sample review, shown only to preview the layout.' },
+  { source: 'instagram', demo: 1, name: '@sample_handle', text: 'Sample Instagram comment for the layout preview.' },
+  { source: 'website', rating: 5, demo: 1, name: 'Sample guest', text: 'Sample guest feedback for the layout preview.' }];
+const L = R.length ? R : demo ? DEMO : HL;
+if (rs) {
+  {
+    const SRC = { google: ['<span class="inline-flex w-5 h-5 items-center justify-center rounded-full bg-white text-[#4285F4] text-xs font-black">G</span>', 'Google review'],
+      instagram: [igSvg('w-5 h-5'), 'Instagram comment'], website: ['<span>💬</span>', 'Guest review'], highlight: ['<span>✨</span>', 'Life at Greenhouse &amp; Route360'] };
+    const eb = $('review-eyebrow'); if (eb) eb.textContent = R.length ? 'What our guests say' : demo ? 'Demo preview: sample reviews, not real' : 'Welcome to Grahan';
+    const card = $('review-card'), dots = $('review-dots'); let k = 0, timer = 0;
+    dots.innerHTML = L.map((_, i) => `<button type="button" data-i="${i}" aria-label="Review ${i + 1}" class="w-2.5 h-2.5 rounded-full bg-white/30 transition"></button>`).join('');
+    const show = (i, fade) => { k = i; const r = L[i], sc = SRC[r.source] || SRC.website;
+      const paint = () => { card.innerHTML = `<div class="flex items-center justify-center gap-2 text-sm font-semibold text-white/80">${sc[0]}${sc[1]}${r.demo ? ' · SAMPLE' : ''}</div>
+        ${r.rating ? `<div class="text-orange-300 text-xl mt-2 tracking-widest">${'★'.repeat(Math.round(r.rating))}</div>` : ''}
+        <p class="text-xl md:text-3xl font-semibold leading-snug mt-3">${r.source === 'highlight' ? eh(r.text) : '“' + eh(r.text) + '”'}</p>
+        ${r.name ? `<p class="mt-4 text-white/70">— ${r.url ? `<a class="underline hover:text-white" target="_blank" rel="noopener" href="${r.url}">${eh(r.name)}</a>` : eh(r.name)}${r.date ? ', ' + eh(r.date) : ''}</p>` : ''}`;
+        card.style.opacity = 1; dots.querySelectorAll('button').forEach((d, j) => d.className = 'w-2.5 h-2.5 rounded-full transition ' + (j === i ? 'bg-accent scale-125' : 'bg-white/30')); };
+      if (fade) { card.style.opacity = 0; setTimeout(paint, 300); } else paint(); };
+    const play = () => { clearInterval(timer); if (L.length > 1 && !mm('(prefers-reduced-motion: reduce)')) timer = setInterval(() => show((k + 1) % L.length, true), 6500); };
+    dots.onclick = e => { const b = e.target.closest('button'); if (b) { show(+b.dataset.i, true); play(); } };
+    rs.onmouseenter = () => clearInterval(timer); rs.onmouseleave = play;
+    const igl = S.instagram.map(i => `<a class="underline hover:text-white" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">@${i.user}</a>`).join(' · ');
+    const links = R.length ? (S.googleReviewsUrl ? `<a class="underline hover:text-white" target="_blank" rel="noopener" href="${S.googleReviewsUrl}">Read all Google reviews</a>` : '')
+      : `Stayed with us? Share your experience ${S.googleReviewsUrl ? `on <a class="underline hover:text-white" target="_blank" rel="noopener" href="${S.googleReviewsUrl}">Google</a> or ` : ''}on Instagram: ${igl}`;
+    if ($('review-links')) $('review-links').innerHTML = links;
+    show(0, false); play();
+  }
+}
+
 /* Map + contact */
 set('map', `<iframe title="Map" class="w-full h-80 rounded-2xl border border-sand" loading="lazy" src="https://www.google.com/maps?q=${encodeURIComponent(S.map.query)}&output=embed"></iframe>
  <a href="${mapUrl}" target="_blank" rel="noopener" class="inline-block mt-3 bg-pine hover:bg-accent text-white font-bold px-6 py-3 rounded-full transition">📍 Open in Google Maps</a>`);
 set('contact-info', `<div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Basecamp & Homestay</b>${S.address}</div>
  <div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Phone / WhatsApp</b><a class="hover:text-accent" href="tel:${S.phoneRaw}">${S.phone}</a></div>
  <div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Email</b><a class="hover:text-accent" href="mailto:${S.email}">${S.email}</a></div>
- <div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Instagram</b>${S.instagram.map(i => `<a class="hover:text-accent" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">@${i.user}</a> <span class="text-slate-400">(${i.label})</span>`).join('<br>')}</div>`);
+ <div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Instagram</b>${S.instagram.map(i => `<a class="hover:text-accent" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">${igSvg('inline w-4 h-4 mr-1 -mt-0.5')}@${i.user}</a> <span class="text-slate-400">(${i.label})</span>`).join('<br>')}</div>`);
 
 /* Booking form -> your Telegram bot/group (via the Worker) */
 const f = $('inquiry');
@@ -203,8 +294,9 @@ const tgrid = $('treks-grid');
 if (tgrid) tgrid.addEventListener('click', e => {
   if (e.target.closest('a')) return;
   const c = e.target.closest('.trek-card'), t = c && S.treks[+c.dataset.i]; if (!t) return;
+  const hasRoute = t.cat !== 'custom' && peakFt(t) > S.baseElevation;
   const o = document.createElement('div'); o.className = 'fixed inset-0 z-[100] bg-ink/90 backdrop-blur flex items-center justify-center p-4';
-  const key = ev => { if (ev.key === 'Escape') close(); }, close = () => { o.remove(); removeEventListener('keydown', key); };
+  let stopRoute = () => {}; const key = ev => { if (ev.key === 'Escape') close(); }, close = () => { stopRoute(); o.remove(); removeEventListener('keydown', key); };
   o.innerHTML = `<div class="relative w-full max-w-3xl max-h-[92vh] overflow-auto bg-ink border border-white/15 rounded-3xl shadow-2xl text-white grid md:grid-cols-2" style="animation:pop .35s ease">
    <div class="h-56 md:h-auto bg-cover bg-center" style="background-image:url('${t.img}')"></div>
    <div class="p-7"><span class="bg-accent text-[10px] font-extrabold px-3 py-1 rounded-full">${t.tag}</span><h3 class="text-3xl font-extrabold mt-3">${t.name}</h3>
@@ -212,8 +304,10 @@ if (tgrid) tgrid.addEventListener('click', e => {
     <div class="grid grid-cols-2 gap-3 mt-5 text-sm"><div class="bg-white/10 rounded-xl p-3">⏱ <b>${t.dur}</b></div><div class="bg-white/10 rounded-xl p-3">⛰ <b>${t.alt}</b></div></div>
     <div class="flex items-center justify-between mt-6"><div>${t.price ? `<b class="text-orange-300 text-xl">${t.price}</b>` : '<span class="text-white/50 text-sm italic">Price on request</span>'}</div>
      <a href="index.html?interest=${t.key}#booking" class="bg-accent hover:bg-orange-500 font-bold px-6 py-3 rounded-full transition">Book this →</a></div></div>
+   ${hasRoute ? `<div class="md:col-span-2 relative border-t border-white/10 bg-black/40"><canvas id="route3d" class="w-full block" style="height:230px;touch-action:none"></canvas><div id="route-info" class="absolute left-4 top-3 text-xs text-white"></div><p class="absolute bottom-2 right-3 text-[10px] text-white/40">Illustrative 3D profile · drag to rotate</p></div>` : ''}
    <button data-close aria-label="Close" class="absolute top-3 right-4 text-3xl text-white">×</button></div>`;
   o.onclick = ev => { if (ev.target === o || ev.target.closest('[data-close]')) close(); };
   addEventListener('keydown', key); document.body.appendChild(o);
+  if (hasRoute) stopRoute = routeAnim($('route3d'), $('route-info'), t);
 });
 })();
