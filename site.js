@@ -9,6 +9,7 @@ const D = { heroImages: [U('1464822759023-fed622ff2c3b'), U('1519681393784-d1202
 Object.keys(D).forEach(k => { if (!S[k] || (Array.isArray(S[k]) && !S[k].length)) S[k] = D[k]; });
 const set = (id, h) => { const e = $(id); if (e) e.innerHTML = h; return e; };
 const mm = s => window.matchMedia ? window.matchMedia(s).matches : false;
+const mq = S.map.query === 'Grahan Village, Himachal Pradesh' ? 'Grahan Village, Kasol, Kullu, Himachal Pradesh' : S.map.query;
 const mapUrl = S.map.url || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(S.map.query);
 const price = p => p ? `<span class="font-extrabold text-accent">${p}</span>` : `<span class="text-xs italic text-slate-500">Price on request</span>`;
 const eh = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -71,6 +72,7 @@ select.inp option{background:#0E1512;color:#fff}
 .rslide{grid-area:1/1;opacity:0;pointer-events:none;transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .6s}
 .rslide.next{transform:translateY(60px) rotateX(-70deg)}.rslide.prev{transform:translateY(-60px) rotateX(70deg)}
 .rslide.on{opacity:1;transform:none;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){.rslide.next,.rslide.prev{transform:none}}
 @keyframes pop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:none}}`;
 document.head.appendChild(st2);
 document.querySelectorAll('[data-bg]').forEach(e => e.style.backgroundImage = `url('${S[e.dataset.bg]}')`);
@@ -183,7 +185,7 @@ if (rs) {
   const show = i => { k = (i + n) % n;
     slides.forEach((sl, j) => { const off = (j - k + n) % n; sl.className = 'rslide text-center px-2 ' + (off === 0 ? 'on' : off <= n / 2 ? 'next' : 'prev'); });
     dots.querySelectorAll('button').forEach((d, j) => d.className = 'w-2.5 h-2.5 rounded-full transition ' + (j === k ? 'bg-accent scale-125' : 'bg-white/30')); };
-  const play = () => { clearInterval(timer); if (n > 1 && !mm('(prefers-reduced-motion: reduce)')) timer = setInterval(() => show(k + 1), 5500); };
+  const play = () => { clearInterval(timer); if (n > 1) timer = setInterval(() => show(k + 1), 4500); };
   const go = d => { show(k + d); play(); };
   dots.onclick = e => { const b = e.target.closest('button'); if (b) { show(+b.dataset.i); play(); } };
   const pv = $('review-prev'), nx = $('review-next'); if (pv) pv.onclick = () => go(-1); if (nx) nx.onclick = () => go(1);
@@ -199,12 +201,19 @@ if (rs) {
 }
 
 /* Map + contact */
-set('map', `<iframe title="Map" class="w-full h-80 rounded-2xl border border-sand" loading="lazy" src="https://www.google.com/maps?q=${encodeURIComponent(S.map.query)}&output=embed"></iframe>
- <a href="${mapUrl}" target="_blank" rel="noopener" class="inline-block mt-3 bg-pine hover:bg-accent text-white font-bold px-6 py-3 rounded-full transition">📍 Open in Google Maps</a>`);
-set('contact-info', `<div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Basecamp & Homestay</b>${S.address}</div>
- <div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Phone / WhatsApp</b><a class="hover:text-accent" href="tel:${S.phoneRaw}">${S.phone}</a></div>
- <div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Email</b><a class="hover:text-accent" href="mailto:${S.email}">${S.email}</a></div>
- <div class="bg-white p-4 rounded-2xl border border-sand"><b class="block text-pine">Instagram</b>${S.instagram.map(i => `<a class="hover:text-accent" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">${igSvg('inline w-4 h-4 mr-1 -mt-0.5')}@${i.user}</a> <span class="text-slate-400">(${i.label})</span>`).join('<br>')}</div>`);
+const dirUrl = S.map.url || 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(mq);
+set('map', `<div class="rv grid md:grid-cols-[370px_1fr] rounded-[2rem] overflow-hidden shadow-2xl bg-ink">
+ <div class="p-8 text-white flex flex-col gap-5 bg-gradient-to-b from-ink to-pine">
+  <div><span class="text-orange-300 text-xs font-bold tracking-widest uppercase">Visit us</span><h3 class="text-2xl font-extrabold mt-1">Greenhouse Homestay</h3>
+   <p class="flex gap-2 text-white/70 text-sm mt-3"><svg viewBox="0 0 24 24" class="w-5 h-5 shrink-0 text-orange-300" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>${S.address}</span></p></div>
+  <a href="${dirUrl}" target="_blank" rel="noopener" class="text-center bg-accent hover:bg-orange-500 font-bold rounded-full py-3 transition shadow-lg shadow-accent/30">Get Directions ↗</a>
+  <div class="space-y-3 text-sm">
+   <a href="tel:${S.phoneRaw}" class="flex items-center gap-3 bg-white/10 hover:bg-white/20 rounded-2xl px-4 py-3 transition"><svg viewBox="0 0 24 24" class="w-5 h-5 shrink-0 text-orange-300" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span><b class="block text-white/50 text-[10px] tracking-widest uppercase">Call / WhatsApp</b>${S.phone}</span></a>
+   <a href="mailto:${S.email}" class="flex items-center gap-3 bg-white/10 hover:bg-white/20 rounded-2xl px-4 py-3 transition break-all"><svg viewBox="0 0 24 24" class="w-5 h-5 shrink-0 text-orange-300" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span><b class="block text-white/50 text-[10px] tracking-widest uppercase">Email</b>${S.email}</span></a></div>
+  <div class="mt-auto"><b class="block text-white/50 text-[10px] tracking-widest uppercase mb-2">Follow along</b><div class="flex flex-wrap gap-2">
+   ${S.instagram.map(i => `<a class="inline-flex items-center gap-2 bg-white/10 hover:bg-accent px-4 py-2 rounded-full text-sm font-semibold transition" target="_blank" rel="noopener" href="https://www.instagram.com/${i.user}/">${igSvg('w-4 h-4')}@${i.user}</a>`).join('')}</div></div>
+ </div>
+ <iframe title="Map of Grahan Village" class="w-full h-80 md:h-full md:min-h-[460px] block" loading="lazy" src="${S.map.embed || 'https://www.google.com/maps?q=' + encodeURIComponent(mq) + '&output=embed'}"></iframe></div>`);
 
 /* Booking form -> your Telegram bot/group (via the Worker) */
 const f = $('inquiry');
