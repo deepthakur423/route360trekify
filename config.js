@@ -38,7 +38,6 @@ window.SITE = {
     { src: 'images/gallery/rt5.jpg', alt: 'Grahan, Himachal Pradesh' },
     { type: 'video', src: 'images/gallery/rtv3.mp4' },
     { src: 'images/gallery/rt6.jpg', alt: 'Grahan, Himachal Pradesh' },
-    { src: 'images/gallery/rt7.jpg', alt: 'Grahan, Himachal Pradesh' },
     { type: 'video', src: 'images/gallery/rtv4.mp4' }
   ],
 
