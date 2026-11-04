@@ -93,12 +93,17 @@ $('mbtn').onclick = () => $('mmenu').classList.toggle('hidden');
 $('mmenu').onclick = () => $('mmenu').classList.add('hidden');
 
 set('footer', `<div class="bg-ink text-white/70 text-sm pt-14 pb-8"><div class="max-w-7xl mx-auto px-4">
- <div class="mb-12 rounded-2xl border-2 border-red-500/70 bg-red-500/10 p-5 text-center"><p class="text-xl md:text-3xl font-extrabold text-white tracking-wide">🚫🍺 GRAHAN IS A STRICTLY NO-ALCOHOL VILLAGE.</p><p class="mt-2 font-bold text-red-200">Please do not bring or consume alcohol here. Thank you for respecting our village.</p></div>
  <div class="grid md:grid-cols-3 gap-10">
   <div>${logoImg('h-24 w-auto bg-cream/95 rounded-2xl p-2')}<p class="mt-4 text-white font-extrabold text-lg">Route360<span class="text-accent">Trekify</span> &amp; Greenhouse Homestay</p><p class="mt-1">Trek the Himalaya. Rest in Grahan.</p></div>
   <div><p class="text-white font-bold mb-3">Explore</p><div class="space-y-2"><a class="block hover:text-accent" href="index.html#trails">Treks</a><a class="block hover:text-accent" href="homestay.html">Greenhouse Homestay</a><a class="block hover:text-accent" href="index.html#around">Around Grahan</a><a class="block hover:text-accent" href="index.html#why">Why Us</a><a class="block hover:text-accent" href="index.html#booking">Book Now</a></div></div>
   <div><p class="text-white font-bold mb-3">Contact</p><p>${S.address}</p><p class="mt-2"><a class="hover:text-accent" href="tel:${S.phoneRaw}">${S.phone}</a></p><p><a class="hover:text-accent" href="mailto:${S.email}">${S.email}</a></p><p class="mt-3 flex flex-wrap gap-x-4 gap-y-1">${ig}</p></div></div>
  <div class="border-t border-white/10 mt-10 pt-6 text-center text-xs text-white/50">&copy; ${new Date().getFullYear()} Route360Trekify &amp; Greenhouse Homestay. All rights reserved.</div></div></div>`);
+
+/* No-alcohol notice (plain signage style, shown under the stats band and on the homestay page) */
+set('notice', `<div class="bg-[#A4231B] text-white"><div class="max-w-5xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-center gap-x-6 gap-y-3 text-center sm:text-left">
+ <svg viewBox="0 0 48 48" class="w-14 h-14 shrink-0" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="20"/><path d="M21 12h6v7l4 5v12H17V24l4-5z"/><path d="M10 38 38 10" stroke-width="4"/></svg>
+ <div><p class="text-xl md:text-3xl font-extrabold uppercase tracking-wide leading-tight">Grahan is a strictly no-alcohol village</p>
+ <p class="mt-1 font-semibold text-white/90">Please do not bring or consume alcohol here. Thank you for respecting our village.</p></div></div></div>`);
 
 /* Treks + filter */
 set('treks-grid', S.treks.map((t, i) => `<div class="trek-card rv" data-i="${i}" data-cat="${t.cat}" style="transition-delay:${(i % 3) * 100}ms"><article class="tilt group cursor-pointer h-full flex flex-col bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-accent/20">
