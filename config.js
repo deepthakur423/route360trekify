@@ -28,7 +28,19 @@ window.SITE = {
 
   // GALLERY: copy photos into images/gallery/ and list them. Empty list = section hidden.
   // gallery: [ {src:'images/gallery/1.jpg', alt:'Greenhouse Homestay at sunrise'}, ... ]
-  gallery: [],
+  gallery: [
+    { src: 'images/gallery/rt1.jpg', alt: 'Grahan, Himachal Pradesh' },
+    { src: 'images/gallery/rt2.jpg', alt: 'Grahan, Himachal Pradesh' },
+    { type: 'video', src: 'images/gallery/rtv1.mp4' },
+    { src: 'images/gallery/rt3.jpg', alt: 'Grahan, Himachal Pradesh' },
+    { src: 'images/gallery/rt4.jpg', alt: 'Grahan, Himachal Pradesh' },
+    { type: 'video', src: 'images/gallery/rtv2.mp4' },
+    { src: 'images/gallery/rt5.jpg', alt: 'Grahan, Himachal Pradesh' },
+    { type: 'video', src: 'images/gallery/rtv3.mp4' },
+    { src: 'images/gallery/rt6.jpg', alt: 'Grahan, Himachal Pradesh' },
+    { src: 'images/gallery/rt7.jpg', alt: 'Grahan, Himachal Pradesh' },
+    { type: 'video', src: 'images/gallery/rtv4.mp4' }
+  ],
 
   // ROOMS: 10 in total. Fill price (any text, e.g. '₹1,800 / night'); empty shows "Price on request".
   rooms: [
